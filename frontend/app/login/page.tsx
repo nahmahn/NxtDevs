@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [username, setUsername] = useState("");
@@ -199,5 +199,13 @@ export default function LoginPage() {
                 </form>
             </motion.div>
         </section>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#030014] flex items-center justify-center text-white">Loading...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }
