@@ -1,7 +1,7 @@
 
 <div align="center">
   <img src="frontend/public/NxtDevs_logo.png" alt="NxtDevs Logo" width="200" />
-  <h1>Brainwave (Axiom)</h1>
+  <h1>NxtDevs</h1>
   <p><strong>Algorithmic Thinking Trainer & Adaptive Learning Platform</strong></p>
   <p>
     A comprehensive system profiling cognitive patterns to identify biases and provide personalized coaching.
