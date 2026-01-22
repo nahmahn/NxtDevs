@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Trophy, RefreshCw, Home, ArrowRight, Zap, Target, Share2, AlertTriangle, CheckCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +15,7 @@ const performanceData = [
     { time: '60s', myScore: 28, oppScore: 10 },
 ];
 
-export default function ResultsPage() {
+function ResultsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [result, setResult] = useState<'VICTORY' | 'DEFEAT' | 'DRAW'>('VICTORY');
@@ -59,8 +59,8 @@ export default function ResultsPage() {
                         {/* Title */}
                         <div className="relative">
                             <h1 className={`text-6xl font-black italic tracking-tighter ${result === 'VICTORY'
-                                    ? "bg-gradient-to-b from-cyan-300 to-cyan-500 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]"
-                                    : "text-red-500"
+                                ? "bg-gradient-to-b from-cyan-300 to-cyan-500 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]"
+                                : "text-red-500"
                                 }`}>
                                 {result}
                             </h1>
@@ -141,5 +141,13 @@ export default function ResultsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ResultsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center text-white">Loading...</div>}>
+            <ResultsContent />
+        </Suspense>
     );
 }
