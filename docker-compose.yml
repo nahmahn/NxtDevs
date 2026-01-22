@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # Python Backend
@@ -10,12 +10,13 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app/backend  # Hot reload for dev
+    env_file:
+      - backend/.env
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/brainwave
+      # Override Redis for Docker networking (localhost in .env won't work inside container)
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      # Pass through other env vars if needed
     depends_on:
       - db
       - redis
@@ -28,8 +29,10 @@ services:
     command: celery -A backend.celery_app worker --loglevel=info
     volumes:
       - ./backend:/app/backend
+    env_file:
+      - backend/.env
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/brainwave
+      # Override Redis for Docker networking
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
