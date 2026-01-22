@@ -1,0 +1,28 @@
+fastapi
+uvicorn
+sqlmodel
+asyncpg
+python-multipart
+simple-websocket
+websockets
+python-dotenv
+psycopg2-binary
+pyyaml
+
+# AI Services
+google-generativeai
+groq
+httpx
+langchain
+langchain-core
+langchain-community
+langchain-google-genai
+langchain-groq
+langchain-openai
+
+# Caching & Background Tasks
+redis[hiredis]
+celery
+
+# Authentication
+PyJWT

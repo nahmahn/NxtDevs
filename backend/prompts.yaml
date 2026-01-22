@@ -1,0 +1,188 @@
+# Question Generation Prompts for Axiom
+# Ported from NxtDevs with enhancements
+
+FEW_SHOT_EXAMPLES:
+  - language: Python
+    topic: Loops
+    difficulty: Easy
+    question: "What is the output of the following code?\nfor i in range(3):\n    print(i)"
+    option_1: "0 1 2"
+    option_2: "1 2 3"
+    option_3: "0 1 2 3"
+    option_4: "Error"
+    correct_answer: "0 1 2"
+    explanation: "range(3) generates 0, 1, 2."
+  - language: Java
+    topic: Data Types
+    difficulty: Easy
+    question: "Which of the following is a valid declaration of a variable in Java?"
+    option_1: "int num = 5;"
+    option_2: "num int = 5;"
+    option_3: "integer num = 5;"
+    option_4: "int = 5 num;"
+    correct_answer: "int num = 5;"
+    explanation: "In Java, the correct order is type then variable name."
+  - language: JavaScript
+    topic: Arrays
+    difficulty: Medium
+    question: "What does [1, 2, 3].map(x => x * 2) return?"
+    option_1: "[2, 4, 6]"
+    option_2: "[1, 4, 9]"
+    option_3: "6"
+    option_4: "undefined"
+    correct_answer: "[2, 4, 6]"
+    explanation: "map() creates a new array with the results of calling a function on every element."
+
+FEW_SHOT_TF:
+  - language: Python
+    topic: Functions
+    difficulty: Easy
+    question: "In Python, functions can return multiple values."
+    option_1: "True"
+    option_2: "False"
+    correct_answer: "True"
+    explanation: "Python functions can return multiple values as a tuple."
+  - language: JavaScript
+    topic: Equality
+    difficulty: Medium
+    question: "In JavaScript, '==' and '===' are the same operator."
+    option_1: "True"
+    option_2: "False"
+    correct_answer: "False"
+    explanation: "'==' checks value equality with type coercion, '===' checks value and type."
+  - language: Java
+    topic: OOP
+    difficulty: Easy
+    question: "In Java, a class can inherit from multiple classes."
+    option_1: "True"
+    option_2: "False"
+    correct_answer: "False"
+    explanation: "Java does not support multiple inheritance for classes."
+
+FEW_SHOT_SUB:
+  - language: JavaScript
+    topic: ES6
+    difficulty: Medium
+    question: "Explain the difference between var, let, and const in JavaScript."
+    correct_answer: "var is function-scoped, let and const are block-scoped. const cannot be reassigned."
+    explanation: "var is function-scoped, let/const are block-scoped. const is immutable after assignment."
+  - language: Python
+    topic: Decorators
+    difficulty: Hard
+    question: "What is a decorator in Python and how is it used?"
+    correct_answer: "A decorator is a function that modifies another function. It is used with the @ symbol above a function definition."
+    explanation: "Decorators allow you to wrap another function to extend its behavior without modifying it directly."
+  - language: Java
+    topic: Interfaces
+    difficulty: Medium
+    question: "What is the purpose of interfaces in Java?"
+    correct_answer: "Interfaces define methods that must be implemented by a class, enabling abstraction and multiple inheritance of type."
+    explanation: "Interfaces allow unrelated classes to implement the same set of methods, supporting abstraction."
+
+PROMPT_TEMPLATES:
+  mcq: |
+    Here are some example questions:
+    {examples}
+    Now, generate a NEW and UNIQUE multiple-choice programming question for:
+    Language: {language}
+    Topic: {topic}
+    Difficulty: {difficulty}
+
+    Do NOT repeat or copy the above examples. Make the question, options, and explanation different and original. Be creative and cover a different concept or code pattern.
+
+    Provide the output in this JSON format:
+    {{
+      "language": "...",
+      "topic": "...",
+      "difficulty": "...",
+      "question": "...",
+      "option_1": "...",
+      "option_2": "...",
+      "option_3": "...",
+      "option_4": "...",
+      "correct_answer": "...",
+      "explanation": "..."
+    }}
+  
+  tf: |
+    Here are some example True/False questions:
+    {examples}
+    Now, generate a NEW and UNIQUE True/False programming question for:
+    Language: {language}
+    Topic: {topic}
+    Difficulty: {difficulty}
+
+    Provide the output in this JSON format:
+    {{
+      "language": "...",
+      "topic": "...",
+      "difficulty": "...",
+      "question": "...",
+      "option_1": "True",
+      "option_2": "False",
+      "correct_answer": "True/False",
+      "explanation": "..."
+    }}
+  
+  sub: |
+    Here are some example Subjective questions:
+    {examples}
+    Now, generate a NEW and UNIQUE subjective programming question for:
+    Language: {language}
+    Topic: {topic}
+    Difficulty: {difficulty}
+
+    Provide the output in this JSON format:
+    {{
+      "language": "...",
+      "topic": "...",
+      "difficulty": "...",
+      "question": "...",
+      "correct_answer": "...",
+      "explanation": "..."
+    }}
+
+# Tutor AI System Prompts
+TUTOR_SYSTEM_PROMPT: |
+  You are an expert AI Programming Tutor. Your goal is to be helpful, encouraging, and educational.
+
+  ROLE:
+  - You are a knowledgeable senior developer mentoring a student.
+  - You explain concepts clearly, starting simple and adding depth as needed.
+  - You write clean, modern, and well-commented code examples.
+
+  CONTEXT:
+  The user has been taking quizzes. Here is their recent performance summary to help you tailor your answers:
+  {performance_summary}
+
+  GUIDELINES:
+  1. **Be Interactive**: Ask follow-up questions to check understanding.
+  2. **Use Markdown**: Format code blocks with language tags (e.g., ```python). Use bold/italics for emphasis.
+  3. **Be Concise but Complete**: Answer the user's question directly, then provide context.
+  4. **Fix Mistakes**: If the user provides code, gently point out errors and show the corrected version.
+  5. **Encourage**: If the user is struggling (indicated by low quiz scores), be extra patient and supportive.
+
+  Current Conversation:
+
+# Report Generation Prompts
+REPORT_ANALYSIS_PROMPT: |
+  Analyze the following student performance data and provide insights:
+
+  Performance Data:
+  {performance_data}
+
+  Generate a JSON response with the following structure:
+  {{
+    "overall_assessment": "Brief overall performance assessment",
+    "strengths": ["List of identified strengths"],
+    "weaknesses": ["List of areas for improvement"],
+    "recommendations": ["Specific study recommendations"],
+    "predicted_mastery_time": "Estimated time to improve",
+    "topic_breakdown": {{
+      "topic_name": {{
+        "score": 0-100,
+        "trend": "improving/declining/stable",
+        "suggested_resources": ["resource suggestions"]
+      }}
+    }}
+  }}
