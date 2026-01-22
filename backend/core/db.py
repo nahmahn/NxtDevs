@@ -31,7 +31,15 @@ print(f"DEBUG: Loading DB. DATABASE_URL found: {bool(DATABASE_URL)}")
 if DATABASE_URL:
     print(f"DEBUG: Using Postgres: {DATABASE_URL.split('@')[-1]}") # Hide password
     # Postgres
-    engine = create_engine(DATABASE_URL, echo=False)
+    # Enable pool_pre_ping to handle dropped connections (e.g. Supabase idle timeouts)
+    # Ensure sslmode is required for cloud DBs
+    engine = create_engine(
+        DATABASE_URL, 
+        echo=False,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        connect_args={"sslmode": "require"}
+    )
 else:
     # SQLite Fallback
     sqlite_file_name = "brainwave.db"
