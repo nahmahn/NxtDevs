@@ -1,5 +1,7 @@
 # Docker
-node_modules/
+# Docker
+**/node_modules/
+**/.next/
 backend/venv/
 venv/
 __pycache__/
