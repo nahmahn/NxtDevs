@@ -18,7 +18,7 @@ if project_root not in sys.path:
 from celery.utils.log import get_task_logger
 
 # Import the shared Celery app
-from celery_app import app
+from backend.celery_app import app
 
 # SQLModel imports
 from sqlmodel import Session, select

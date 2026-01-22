@@ -1,0 +1,22 @@
+# Docker
+node_modules/
+backend/venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+backend/.env
+frontend/.env
+.venv
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
