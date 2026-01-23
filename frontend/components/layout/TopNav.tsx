@@ -30,7 +30,7 @@ export function TopNav() {
                 return;
             }
 
-            fetch("http://localhost:8000/api/v1/user/profile", {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, {
                 headers: { 'X-User-Id': userId }
             })
                 .then((res) => {

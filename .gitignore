@@ -22,3 +22,5 @@ dist/
 # Backend
 backend/venv/
 backend/.env
+
+nxtdevs20-images.tar

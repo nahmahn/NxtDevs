@@ -31,7 +31,7 @@ export default function Leaderboard() {
         setError(null);
         try {
             const userId = localStorage.getItem('user_id');
-            const res = await fetch("http://localhost:8000/api/v1/leaderboard?limit=20", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leaderboard?limit=20`, {
                 headers: userId ? { 'X-User-Id': userId } : {}
             });
             if (!res.ok) throw new Error("Failed to load leaderboard");

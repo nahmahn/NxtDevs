@@ -6,14 +6,17 @@ services:
       dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app/backend # Hot reload for dev
     env_file:
       - backend/.env
     environment:
+      # Override Redis for Docker networking (localhost in .env won't work inside container)
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    restart: always
     depends_on:
+      - db
       - redis
 
   # Celery Worker
@@ -22,36 +25,59 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     command: celery -A backend.celery_app worker --loglevel=info
+    volumes:
+      - ./backend:/app/backend
     env_file:
       - backend/.env
     environment:
+      # Override Redis for Docker networking
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    restart: always
     depends_on:
+      - db
       - redis
       - backend
 
-  # Next.js Frontend (Production Build)
+  # Next.js Frontend
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile # Uses the PROD Dockerfile (node 20, npm run build)
+      dockerfile: frontend/Dockerfile.dev
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Use container's node_modules
+      - /app/.next # Persist build cache
     environment:
-      - NEXT_PUBLIC_API_URL=http://your-server-ip-or-domain:8000
-    restart: always
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    command: npm run dev # Skip build, run in dev mode
     depends_on:
       - backend
 
-  # Redis (Self-hosted in Docker)
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: brainwave
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis
   redis:
     image: redis:7-alpine
     restart: always
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
 
 volumes:
+  postgres_data:
   redis_data:

@@ -25,7 +25,7 @@ function LoginContent() {
     const handleGoogleCallback = async (code: string) => {
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:8000/api/v1/auth/google/callback", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google/callback`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code }),
@@ -55,7 +55,7 @@ function LoginContent() {
         setError("");
 
         try {
-            const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
@@ -82,7 +82,7 @@ function LoginContent() {
 
     const handleGoogleLogin = async () => {
         try {
-            const res = await fetch("http://localhost:8000/api/v1/auth/google/login");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google/login`);
             const data = await res.json();
             if (data.url) {
                 window.location.href = data.url;

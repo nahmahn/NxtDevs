@@ -29,7 +29,7 @@ export default function SettingsPage() {
     useEffect(() => {
         // Fetch current user profile
         const userId = localStorage.getItem('user_id');
-        fetch("http://localhost:8000/api/v1/user/profile", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, {
             headers: userId ? { 'X-User-Id': userId } : {}
         })
             .then((res) => res.json())
@@ -64,7 +64,7 @@ export default function SettingsPage() {
         try {
             // Save profile to backend
             const userId = localStorage.getItem('user_id');
-            const response = await fetch("http://localhost:8000/api/v1/user/profile", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
