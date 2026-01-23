@@ -47,6 +47,8 @@ services:
     restart: always
     depends_on:
       - backend
+    env_file:
+      - frontend/.env
 
   # Redis (Self-hosted in Docker)
   redis:

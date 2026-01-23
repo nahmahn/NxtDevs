@@ -53,6 +53,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://backend:8000
     command: npm run dev # Skip build, run in dev mode
+    
     depends_on:
       - backend
 
