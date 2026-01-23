@@ -40,10 +40,8 @@ services:
       dockerfile: frontend/Dockerfile # Uses the PROD Dockerfile (node 20, npm run build)
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=https://api.nxtdevs.app
-      # Internal URL for Next.js SSR to talk to Backend within Docker network
-      - INTERNAL_API_URL=http://backend:8000
+    args:
+      NEXT_PUBLIC_API_URL: https://api.nxtdevs.app
     restart: always
     depends_on:
       - backend
