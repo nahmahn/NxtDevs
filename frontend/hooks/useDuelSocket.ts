@@ -52,7 +52,11 @@ export function useDuelSocket({ duelId, username, onMessage, onConnect, onDiscon
             wsRef.current.close();
         }
 
-        const url = `ws://localhost:8000/api/v1/ws/duel/${currentDuelId}${username ? `?user=${username}` : ''}`;
+
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        // Replace http/https with ws/wss
+        const wsUrl = apiUrl.replace(/^http/, 'ws');
+        const url = `${wsUrl}/api/v1/ws/duel/${currentDuelId}${username ? `?user=${username}` : ''}`;
         const ws = new WebSocket(url);
         wsRef.current = ws;
 

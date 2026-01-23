@@ -39,7 +39,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile # Uses the PROD Dockerfile (node 20, npm run build)
       args:
-      NEXT_PUBLIC_API_URL: https://api.nxtdevs.app
+        - NEXT_PUBLIC_API_URL=https://api.nxtdevs.app
     ports:
       - "3000:3000"
 
