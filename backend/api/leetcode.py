@@ -21,40 +21,12 @@ class LeetCodeStatsResponse(BaseModel):
     medium: int
     hard: int
     ranking: int
+    streak: int
+    streak_active: bool
     thinking_patterns: dict
     last_synced: Optional[str]
 
-@router.post("/link")
-async def link_leetcode_account(
-    req: LinkRequest,
-    user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
-):
-    """
-    Links a LeetCode username to the current user and performs initial sync.
-    """
-    try:
-        # Verify valid user by attempting sync
-        stats = await leetcode_service.sync_user_stats(session, user, req.username)
-        return {"message": "LeetCode account linked successfully", "stats": stats}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@router.post("/sync")
-async def sync_leetcode_stats(
-    background_tasks: BackgroundTasks,
-    user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
-):
-    """
-    Triggers a refresh of LeetCode stats.
-    """
-    if not user.leetcode_username:
-        raise HTTPException(status_code=400, detail="No LeetCode account linked.")
-    
-    # Run synchronously for now to give immediate feedback, or move to background if too slow
-    stats = await leetcode_service.sync_user_stats(session, user)
-    return {"message": "Stats synced", "stats": stats}
+# ...
 
 @router.get("/stats")
 async def get_leetcode_stats(
@@ -82,6 +54,8 @@ async def get_leetcode_stats(
         "medium": stats.medium_solved,
         "hard": stats.hard_solved,
         "ranking": stats.ranking,
+        "streak": stats.streak,
+        "streak_active": stats.streak_active,
         "thinking_patterns": stats.thinking_patterns,
         "tag_stats": stats.tag_stats,
         "recent_submissions": stats.recent_submissions,

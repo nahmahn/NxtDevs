@@ -57,11 +57,19 @@ app.conf.update(
     task_max_retries=3,
 )
 
+
 # Explicitly register task modules
 app.conf.imports = [
     'backend.services.celery_tasks'
 ]
 
+# Periodic Tasks (Celery Beat)
+app.conf.beat_schedule = {
+    'cleanup-stale-duels-every-15-mins': {
+        'task': 'cleanup_stale_duels',
+        'schedule': 900.0,  # 15 minutes
+    },
+}
 
 @app.task(bind=True, name='test_task')
 def test_task(self):

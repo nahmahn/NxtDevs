@@ -20,6 +20,8 @@ interface LeetCodeStats {
     medium?: number;
     hard?: number;
     ranking?: number;
+    streak?: number;
+    streak_active?: boolean;
     thinking_patterns?: Record<string, string>;
     tag_stats?: Record<string, number>;
     recent_submissions?: Array<{
@@ -262,8 +264,12 @@ export default function LeetCodePage() {
                                 <span className="text-[10px] font-bold text-white/30 uppercase tracking-wider">Total Active</span>
                             </div>
                             <div>
-                                <div className="text-2xl font-black text-white tabular-nums">14 Days</div>
-                                <div className="text-[10px] font-medium text-[#ffa116]">Current Day Streak</div>
+                                <div className="text-2xl font-black text-white tabular-nums">
+                                    {stats.streak ? `${stats.streak} Days` : "0 Days"}
+                                </div>
+                                <div className={`text-[10px] font-medium ${stats.streak_active ? "text-[#ffa116]" : "text-white/40"}`}>
+                                    {stats.streak_active ? "Current Day Streak 🔥" : "Streak Inactive"}
+                                </div>
                             </div>
                         </SpotlightCard>
                         <SpotlightCard className="!bg-[#151515] !rounded-2xl !border-white/5 !p-5 flex flex-col justify-between h-[140px]">

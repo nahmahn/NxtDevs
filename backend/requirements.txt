@@ -23,6 +23,10 @@ langchain-openai
 # Caching & Background Tasks
 redis[hiredis]
 celery
+wikipedia-api
+arxiv
+duckduckgo-search
+
 
 # Authentication
 PyJWT

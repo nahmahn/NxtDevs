@@ -148,6 +148,63 @@ class LeetCodeService:
             
         return patterns
 
+    def _calculate_streak(self, submission_calendar: dict) -> tuple[int, bool]:
+        """
+        Calculates streak from submission calendar (timestamp -> count).
+        Returns (streak_count, is_active).
+        """
+        if not submission_calendar:
+            return 0, False
+            
+        # Convert timestamps to date objects
+        dates = set()
+        for ts in submission_calendar.keys():
+            try:
+                date = datetime.fromtimestamp(int(ts)).date()
+                dates.add(date)
+            except ValueError:
+                continue
+                
+        if not dates:
+            return 0, False
+            
+        today = datetime.now().date()
+        sorted_dates = sorted(list(dates), reverse=True)
+        
+        current_streak = 0
+        is_active = False
+        
+        # Check if active (submitted today)
+        if today in dates:
+            is_active = True
+            
+        # Helper to check if dates are consecutive
+        from datetime import timedelta
+        
+        # Determine start point: Today or Yesterday
+        start_date = today
+        if today not in dates:
+            # If not submitted today, check if submitted yesterday to keep streak "alive" conceptually?
+            # Usually streak breaks if not done today. But typical logic:
+            # If done yesterday, streak is X. If done today, streak is X+1.
+            # Here we just count consecutive days backwards from the latest submission
+            if not sorted_dates: 
+                return 0, False
+            start_date = sorted_dates[0]
+            
+            # If latest submission was before yesterday, streak is broken/0?
+            # Use strict logic: If latest is not today or yesterday, streak is definitely 0.
+            if start_date < today - timedelta(days=1):
+                return 0, False
+        
+        # Calculate streak
+        check_date = start_date
+        while check_date in dates:
+            current_streak += 1
+            check_date -= timedelta(days=1)
+            
+        return current_streak, is_active
+
     async def sync_user_stats(self, session: Session, user: User, username: str = None):
         """
         Fetches data and updates the DB.
@@ -227,6 +284,11 @@ class LeetCodeService:
         
         # Store the FULL AI Report in thinking_patterns
         stats.thinking_patterns = ai_report 
+        
+        # Calculate Streak
+        streak, streak_active = self._calculate_streak(submission_calendar)
+        stats.streak = streak
+        stats.streak_active = streak_active
         
         stats.recent_submissions = recent_submissions
         stats.submission_calendar = submission_calendar

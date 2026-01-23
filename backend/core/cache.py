@@ -34,7 +34,11 @@ class CacheService:
             print("[Cache] redis package not installed, caching disabled")
             return
             
-        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+        REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+        REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+        default_url = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+        redis_url = os.getenv("REDIS_URL", default_url)
+
         try:
             self.redis = redis.from_url(redis_url, decode_responses=True)
             await self.redis.ping()

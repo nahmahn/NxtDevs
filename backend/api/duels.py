@@ -11,7 +11,7 @@ import asyncio
 
 from backend.core.db import get_session
 from backend.models.duel_models import DuelSession, DuelRound, DuelStatus, MatchmakingQueue
-from backend.models.user_state import User, ThinkingProfile, Attempt
+from backend.models.user_state import User, ThinkingProfile, Attempt, RatingHistory
 from backend.models.canonical import Question, Option
 from backend.services.matchmaking import MatchmakingService
 from backend.engine.scoring import ScoringEngine
@@ -417,6 +417,27 @@ async def _finish_duel(session: Session, duel: DuelSession, duel_id_str: str):
         p2_profile.elo_rating = p2_new
         session.add(p2_profile)
     
+    # Save Rating History for Graph
+    timestamp = datetime.utcnow()
+    
+    # Player 1 History
+    p1_history = RatingHistory(
+        user_id=duel.player1_id,
+        rating=p1_new,
+        delta=p1_new - duel.player1_rating_start,
+        timestamp=timestamp
+    )
+    session.add(p1_history)
+    
+    # Player 2 History
+    p2_history = RatingHistory(
+        user_id=duel.player2_id,
+        rating=p2_new,
+        delta=p2_new - duel.player2_rating_start,
+        timestamp=timestamp
+    )
+    session.add(p2_history)
+    
     session.add(duel)
     session.commit()
     
@@ -455,6 +476,10 @@ async def duel_websocket(websocket: WebSocket, duel_id: str):
     # Get user from query param
     x_test_user = websocket.query_params.get("user")
     
+    # 1. Validation Phase (Short-lived session)
+    user = None
+    duel_uuid = None
+    
     with SqlSession(engine) as session:
         try:
             duel_uuid = UUID(duel_id)
@@ -487,21 +512,30 @@ async def duel_websocket(websocket: WebSocket, duel_id: str):
         
         user_id_str = str(user.id)
         
-        # Connect
-        await manager.connect(websocket, duel_id, user_id_str)
+        user_id_str = str(user.id)
         
-        try:
-            # Handle reconnection: Send current state if already in progress
-            if duel.status == DuelStatus.IN_PROGRESS:
+    # Connect
+    await manager.connect(websocket, duel_id, user_id_str)
+    
+    try:
+        # Handle reconnection: Send current state if already in progress
+        # Use a fresh short-lived session for state checks
+        with SqlSession(engine) as session:
+             duel = session.get(DuelSession, duel_uuid)
+             if duel and duel.status == DuelStatus.IN_PROGRESS:
                 print(f"[WS] User {user.username} reconnected to active duel {duel.id}")
                 await websocket.send_json({
                     "type": "QUESTION_START",
                     "round": duel.current_round
                 })
-            
-            # Check if both players connected
+        
+        # Check if both players connected
+        # Use a fresh session for match start logic
+        with SqlSession(engine) as session:
+            duel = session.get(DuelSession, duel_uuid)
             connected = manager.get_connected_users(duel_id)
-            if len(connected) >= 2 and duel.status == DuelStatus.COUNTDOWN:
+            
+            if duel and len(connected) >= 2 and duel.status == DuelStatus.COUNTDOWN:
                 # Start the duel
                 duel.status = DuelStatus.IN_PROGRESS
                 duel.started_at = datetime.utcnow()
@@ -540,18 +574,18 @@ async def duel_websocket(websocket: WebSocket, duel_id: str):
                 if message.get("type") == "PING":
                     await websocket.send_json({"type": "PONG"})
                     
-        except WebSocketDisconnect:
-            print(f"[WS] User {user.username} disconnected from duel {duel_id}")
-            manager.disconnect(duel_id, user_id_str)
-            
-            # Notify opponent of disconnect
-            await manager.broadcast_to_duel(duel_id, {
-                "type": "OPPONENT_DISCONNECTED"
-            })
-        except Exception as e:
-            print(f"[WS] Error in duel {duel_id}: {e}")
-            manager.disconnect(duel_id, user_id_str)
-            try:
-                await websocket.close(code=1011)  # Internal error
-            except:
-                pass
+    except WebSocketDisconnect:
+        print(f"[WS] User {user.username} disconnected from duel {duel_id}")
+        manager.disconnect(duel_id, user_id_str)
+        
+        # Notify opponent of disconnect
+        await manager.broadcast_to_duel(duel_id, {
+            "type": "OPPONENT_DISCONNECTED"
+        })
+    except Exception as e:
+        print(f"[WS] Error in duel {duel_id}: {e}")
+        manager.disconnect(duel_id, user_id_str)
+        try:
+            await websocket.close(code=1011)  # Internal error
+        except:
+            pass

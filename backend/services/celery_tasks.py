@@ -335,3 +335,57 @@ def generate_questions_batch_task(language: str, topic: str, difficulty: str, co
     # This would use the prompts.yaml templates and ai_service
     
     return {"status": "success", "count": count}
+
+
+@app.task(name='cleanup_stale_duels')
+def cleanup_stale_duels_task():
+    """
+    Periodic task to clean up duels that have been stuck in IN_PROGRESS
+    for too long (e.g., due to server restart or bugs).
+    """
+    logger.info("Running stale duel cleanup...")
+    
+    db = get_db_session()
+    try:
+        from backend.models.duel_models import DuelSession, DuelStatus
+        from datetime import datetime, timedelta
+        
+        # Time threshold (1 hour ago)
+        threshold = datetime.utcnow() - timedelta(hours=1)
+        
+        # Find stuck duels
+        # We look for IN_PROGRESS or COUNTDOWN that started > 1 hour ago
+        # Note: started_at can be None if it never started, but status checks cover it
+        stuck_duels = db.exec(
+            select(DuelSession).where(
+                (DuelSession.status == DuelStatus.IN_PROGRESS) | 
+                (DuelSession.status == DuelStatus.COUNTDOWN)
+            ).where(DuelSession.started_at < threshold)
+        ).all()
+        
+        if not stuck_duels:
+            logger.info("No stale duels found.")
+            return {"count": 0}
+            
+        logger.warning(f"Found {len(stuck_duels)} stale duels. Cleaning up...")
+        
+        for duel in stuck_duels:
+            logger.info(f"Marking duel {duel.id} as COMPLETED/ABANDONED (started: {duel.started_at})")
+            
+            # Close it as a draw with no rating change
+            duel.status = DuelStatus.COMPLETED 
+            duel.ended_at = datetime.utcnow()
+            duel.winner_id = None
+            duel.player1_rating_delta = 0.0
+            duel.player2_rating_delta = 0.0
+            
+            db.add(duel)
+            
+        db.commit()
+        return {"count": len(stuck_duels)}
+        
+    except Exception as e:
+        logger.error(f"Error cleaning up duels: {e}")
+        return {"error": str(e)}
+    finally:
+        db.close()

@@ -20,6 +20,11 @@ class LeetCodeStats(SQLModel, table=True):
     hard_solved: int = Field(default=0)
     ranking: int = Field(default=0)
     
+    # Streak Tracking
+    streak: int = Field(default=0)
+    streak_active: bool = Field(default=False)
+
+    
     # Detailed Tag Stats (from matchedUser.tagProblemCounts)
     # Stored as JSON: {"DP": 15, "Greedy": 8, ...}
     tag_stats: Dict = Field(default={}, sa_type=JSON)

@@ -77,7 +77,7 @@ export function RatingHistoryGraph() {
         );
     }
 
-    const { history, current_rating, total_changes, highest_rating, lowest_rating } = data;
+    const { history = [], current_rating = 1200, total_changes = 0, highest_rating, lowest_rating } = data || {};
 
     // Calculate graph dimensions
     const graphHeight = 120;
@@ -195,6 +195,8 @@ export function RatingHistoryGraph() {
                             const linePath = calcPoints.length > 0
                                 ? `M ${calcPoints[0].x} ${calcPoints[0].y} ` + calcPoints.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ')
                                 : '';
+
+                            if (calcPoints.length === 0) return null;
 
                             const areaPath = `${linePath} L ${calcPoints[calcPoints.length - 1].x} ${100 - yPad} L ${calcPoints[0].x} ${100 - yPad} Z`;
 

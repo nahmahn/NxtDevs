@@ -12,7 +12,9 @@ from pathlib import Path
 try:
     import redis
     from langchain_community.chat_message_histories import RedisChatMessageHistory
+    from langchain_community.chat_message_histories import RedisChatMessageHistory
     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    from langchain_core.messages import SystemMessage
     from langchain_core.runnables.history import RunnableWithMessageHistory
     from langchain_google_genai import ChatGoogleGenerativeAI
     from langchain_core.output_parsers import StrOutputParser
@@ -43,7 +45,12 @@ except ImportError:
 from dotenv import load_dotenv
 load_dotenv()
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+default_url = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+REDIS_URL = os.getenv("REDIS_URL", default_url)
+
+print(f"DEBUG: TutorService REDIS_URL={REDIS_URL}")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -220,7 +227,7 @@ class TutorAIService:
             base_instruction += f"\n\n**Recent Web Search Results (use this to answer the user's question):**\n{search_context}"
         
         prompt = ChatPromptTemplate.from_messages([
-            ("system", base_instruction),
+            SystemMessage(content=base_instruction),
             MessagesPlaceholder(variable_name="history"),
             ("human", "{input}"),
         ])
@@ -509,7 +516,8 @@ class TutorAIService:
             import traceback
             traceback.print_exc()
             print(f"Stream Error: {e}")
-            yield f"I'm having trouble connecting. Error: {error_str}"
+            print(f"Stream Error: {e} (REDIS_URL={self.redis_url})")
+            yield f"I'm having trouble connecting to memory. Error: {error_str}"
     
     def clear_history(self, user_id: str) -> bool:
         """Clear chat history for a user."""
