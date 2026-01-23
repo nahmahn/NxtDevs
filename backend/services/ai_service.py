@@ -304,27 +304,45 @@ class AIService:
             summary_text += "\nRecent Mistakes:\n" + "\n".join(recent_mistakes[:5])
 
         system_prompt = """
-        You are an expert personalized learning coach. Analyze the student's performance data and generate a detailed report.
+        You are a Senior Staff Engineer at a FAANG company reviewing a candidate's LeetCode history. 
+        Your job is to provide a BRUTALLY CONCISE, high-signal technical assessment.
         
         RETURN JSON ONLY with this exact structure:
         {
-            "overall_assessment": "A comprehensive paragraph analyzing their coding intuition, patterns, and current level.",
+            "overall_assessment": "3 sentences MAX. Clinical analysis of their engineering intuition. No fluff.",
             "overall_accuracy": <number>,
-            "strengths": ["Detailed point 1", "Detailed point 2"],
-            "weaknesses": ["Detailed point 1", "Detailed point 2"],
+            "strengths": ["Technical strength 1 (e.g. 'Excellent DP state definitions')", "Technical strength 2"],
+            "weaknesses": ["Technical gap 1 (e.g. 'Fails edge cases in graph traversal')", "Technical gap 2"],
             "recommendations": [
-                "Actionable advice 1 (e.g. 'Practice dynamic programming edge cases')",
-                "Actionable advice 2",
-                "Actionable advice 3"
+                "Drill 1 (e.g. 'Grind blind 75 graph list')",
+                "Drill 2"
+            ],
+            "recommended_problems": [
+                {"title": "Specific Problem 1", "slug": "problem-slug-1", "difficulty": "Medium"},
+                {"title": "Specific Problem 2", "slug": "problem-slug-2", "difficulty": "Hard"},
+                {"title": "Specific Problem 3", "slug": "problem-slug-3", "difficulty": "Medium"}
+            ],
+            "roadmap": [
+                {
+                    "phase": "Phase 1: [Dynamic Phase Name]",
+                    "focus": "[Specific Technical Focus]",
+                    "description": "[2-sentence explanation of why this phase is needed based on user data]",
+                    "video_query": "LeetCode [Specific Topic] Tutorial",
+                    "problems": [
+                        {"title": "[Problem Title]", "slug": "problem-slug", "difficulty": "Easy", "reason": "[Educational reason]"},
+                        {"title": "[Problem Title]", "slug": "problem-slug", "difficulty": "Medium", "reason": "[Educational reason]"}
+                    ]
+                },
+                ...
             ]
         }
         
-        Guidelines:
-        - Be encouraging but honest.
-        - Look for patterns (e.g., good at logic but bad at syntax, or good at easy but fails hard questions).
-        - If data is sparse, give general advice on building consistency.
-        - "strengths" and "weaknesses" should be specific (e.g., "Strong grasp of array manipulation" instead of "Good at arrays").
-        - "recommendations" must be concrete actions.
+        CRITICAL GUIDELINES:
+        ...
+        5. **ROADMAP**: Create a customized 3-phase curriculum. Phase 1 targets glaring mistakes. Phase 2 builds muscle memory. Phase 3 challenges them.
+        6. **MEDIA**: For each phase, provide a specific "video_query".
+        7. **DETAIL**: "description" must explain the pedagogy. "reason" for each problem must explain WHY it was chosen.
+        8. **DYNAMIC CONTENT**: Do NOT copy the example placeholders. Generate unique content tailored to this specific student.
         """
         
         try:
@@ -338,7 +356,9 @@ class AIService:
                 "overall_accuracy": 0,
                 "strengths": [],
                 "weaknesses": [],
-                "recommendations": ["Practice more problems to generate data."]
+                "recommendations": ["Practice more problems to generate data."],
+                "recommended_problems": [],
+                "roadmap": []
             }
 
 

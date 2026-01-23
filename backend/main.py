@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from backend.api import questions, duels, auth, tutor, reports
+from backend.api import questions, duels, auth, tutor, reports, leetcode
 from backend.core.db import create_db_and_tables
 from backend.core.cache import cache
 
@@ -35,6 +35,7 @@ app.include_router(questions.router, prefix="/api/v1")
 app.include_router(duels.router, prefix="/api/v1")
 app.include_router(tutor.router, prefix="/api/v1")
 app.include_router(reports.router, prefix="/api/v1")
+app.include_router(leetcode.router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():

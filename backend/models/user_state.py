@@ -15,6 +15,10 @@ class User(UserBase, table=True):
     profile: Optional["ThinkingProfile"] = Relationship(back_populates="user")
     attempts: List["Attempt"] = Relationship(back_populates="user")
     reports: List["UserReport"] = Relationship(back_populates="user")
+    
+    # External integrations
+    leetcode_username: Optional[str] = Field(default=None)
+    leetcode_stats: Optional["LeetCodeStats"] = Relationship(back_populates="user")
 
 class ThinkingProfile(SQLModel, table=True):
     """

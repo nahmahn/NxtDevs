@@ -6,18 +6,33 @@ import { RatingHistoryGraph } from "@/components/profile/RatingHistoryGraph";
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import CountUp from '@/components/ui/CountUp';
 import TiltedCard from '@/components/ui/TiltedCard';
+import LeetCodeAnalysisCard from "@/components/profile/LeetCodeAnalysisCard";
 
 export default function ProfilePage() {
     const [stats, setStats] = useState<any>(null);
+    const [leetcodeStats, setLeetCodeStats] = useState<any>(null);
 
     useEffect(() => {
         const userId = localStorage.getItem('user_id');
+        const token = localStorage.getItem('auth_token');
+
+        // Fetch user profile
         fetch("http://localhost:8000/api/v1/user/profile", {
             headers: userId ? { 'X-User-Id': userId } : {}
         })
             .then((res) => res.json())
             .then(setStats)
             .catch((err) => console.error(err));
+
+        // Fetch LeetCode stats
+        if (token) {
+            fetch("http://localhost:8000/api/v1/leetcode/stats", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(setLeetCodeStats)
+                .catch(err => console.error("LeetCode fetch error:", err));
+        }
     }, []);
 
     if (!stats) {
@@ -140,6 +155,11 @@ export default function ProfilePage() {
                         ))}
                     </div>
                 </div>
+
+                {/* LeetCode Analysis */}
+                {leetcodeStats && leetcodeStats.linked && (
+                    <LeetCodeAnalysisCard stats={leetcodeStats} />
+                )}
             </div>
 
             {/* Right Column (Sidebar) */}

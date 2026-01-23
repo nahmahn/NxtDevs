@@ -10,6 +10,7 @@ import {
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import CountUp from '@/components/ui/CountUp';
 import BlurText from '@/components/ui/BlurText';
+import LeetCodeWidget from '@/components/dashboard/LeetCodeWidget';
 
 interface UserStats {
     username: string;
@@ -124,9 +125,9 @@ export default function Dashboard() {
         { id: 1, title: "PRACTICE MODE", subtitle: "Adaptive learning, no pressure", category: "practice", type: "card-orange", locked: false, badge: "Recommended", href: "/practice", icon: <Brain size={100} /> },
         { id: 2, title: "RATING MODE", subtitle: "Compete for global ranking", category: "rating", type: "card-blue", locked: false, href: "/rating", icon: <Trophy size={100} /> },
         { id: 3, title: "1V1 DUELS", subtitle: "Real-time battles", category: "duel", type: "card-teal", locked: false, href: "/duel", icon: <Gamepad2 size={100} /> },
+        { id: 5, title: "LEETCODE ANALYTICS", subtitle: "Biases & Thinking Profile", category: "analytics", type: "card-dark border-[#ffa116]/40 bg-[#ffa116]/5 hover:bg-[#ffa116]/10", locked: false, href: "/leetcode", icon: <Activity size={100} className="text-[#ffa116]" /> },
         { id: 4, title: "DAILY CHALLENGE", subtitle: "Fresh problems every day", category: "daily", type: "card-purple", locked: true, href: "#", icon: <Calendar size={100} /> },
-        { id: 5, title: "PROBLEM SETS", subtitle: "Curated collections", category: "sets", type: "card-dark", locked: true, href: "#", icon: <Puzzle size={100} /> },
-        { id: 6, title: "CODE REVIEW", subtitle: "Learn from mistakes", category: "review", type: "card-dark", locked: true, href: "#", icon: <BarChart3 size={100} /> },
+        { id: 6, title: "PROBLEM SETS", subtitle: "Curated collections", category: "sets", type: "card-dark", locked: true, href: "#", icon: <Puzzle size={100} /> },
     ];
 
     // Loading skeleton
@@ -301,6 +302,9 @@ export default function Dashboard() {
 
             {/* Right Sidebar */}
             <div className="w-[300px] space-y-5 hidden xl:block">
+                {/* LeetCode Integration */}
+                <LeetCodeWidget />
+
                 {/* Ratings Card */}
                 <div className="bg-[#151515] rounded-2xl p-5 border border-white/5">
                     <div className="flex items-center justify-between mb-4">
@@ -422,6 +426,15 @@ export default function Dashboard() {
                         >
                             View Leaderboard
                         </Link>
+                    </div>
+                </div>
+
+                {/* Calendar Widget */}
+                <div className="bg-[#1a1a1a] rounded-2xl p-5 border border-white/5">
+                    <h3 className="text-[11px] font-bold text-white/30 tracking-wider mb-4">ACTIVITY</h3>
+                    {/* Placeholder for now until we wire up the prop */}
+                    <div className="text-center text-xs text-white/30">
+                        Check LeetCode page for detailed calendar
                     </div>
                 </div>
             </div>
