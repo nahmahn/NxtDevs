@@ -22,11 +22,14 @@ else:
     load_dotenv()
 
 # Build Redis URL from environment
-redis_url = os.getenv("REDIS_URL") or os.getenv("CELERY_BROKER_URL")
-if not redis_url:
-    redis_host = os.getenv("REDIS_HOST", "localhost")
-    redis_port = os.getenv("REDIS_PORT", "6379")
+redis_host = os.getenv("REDIS_HOST")
+redis_port = os.getenv("REDIS_PORT", "6379")
+
+# Prioritize HOST construction if exists (for Docker), otherwise check URL
+if redis_host:
     redis_url = f'redis://{redis_host}:{redis_port}/0'
+else:
+    redis_url = os.getenv("REDIS_URL") or os.getenv("CELERY_BROKER_URL") or "redis://localhost:6379/0"
 
 # Initialize Celery app
 app = Celery(

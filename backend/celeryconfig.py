@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Redis configuration
-redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+redis_host = os.getenv("REDIS_HOST")
+redis_port = os.getenv("REDIS_PORT", "6379")
+if redis_host:
+    redis_url = f"redis://{redis_host}:{redis_port}/0"
+else:
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 # Broker settings
 broker_url = os.getenv("CELERY_BROKER_URL", redis_url)

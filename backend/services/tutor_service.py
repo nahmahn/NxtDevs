@@ -45,10 +45,14 @@ except ImportError:
 from dotenv import load_dotenv
 load_dotenv()
 
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
-default_url = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-REDIS_URL = os.getenv("REDIS_URL", default_url)
+
+# Prioritize HOST construction if exists (for Docker), otherwise check URL
+if REDIS_HOST:
+    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+else:
+    REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 print(f"DEBUG: TutorService REDIS_URL={REDIS_URL}")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

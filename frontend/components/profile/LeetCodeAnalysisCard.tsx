@@ -15,6 +15,8 @@ interface LeetCodeStats {
     ranking?: number;
     thinking_patterns?: Record<string, string>;
     tag_stats?: Record<string, number>;
+    streak?: number;
+    streak_active?: boolean;
 }
 
 interface Props {
@@ -47,6 +49,14 @@ export default function LeetCodeAnalysisCard({ stats }: Props) {
                     <h3 className="text-sm font-bold text-white tracking-wide uppercase">LeetCode Thinking Profile</h3>
                     <p className="text-xs text-white/40">Cognitive analysis based on {stats.total_solved} solved problems</p>
                 </div>
+            </div>
+
+            {/* Streak Badge */}
+            <div className="absolute top-6 right-6 flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                <div className={`w-2 h-2 rounded-full ${stats.streak_active ? 'bg-orange-500 animate-pulse' : 'bg-gray-500'}`} />
+                <span className="text-xs font-bold text-white/60">
+                    {stats.streak || 0} Day Streak
+                </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -86,15 +96,23 @@ export default function LeetCodeAnalysisCard({ stats }: Props) {
                     <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Detected Patterns</h4>
 
                     {stats.thinking_patterns && Object.keys(stats.thinking_patterns).length > 0 ? (
-                        Object.entries(stats.thinking_patterns).map(([category, insight], i) => (
-                            <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-3">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Brain size={14} className="text-purple-400" />
-                                    <span className="text-[10px] font-bold text-white/60 uppercase">{category}</span>
+                        Object.entries(stats.thinking_patterns).map(([category, insight], i) => {
+                            // Skip complex objects (like recommended_problems) to prevent React Error #31
+                            if (!insight || (typeof insight === 'object' && !Array.isArray(insight))) return null;
+                            if (Array.isArray(insight) && insight.length > 0 && typeof insight[0] === 'object') return null;
+
+                            const displayContent = Array.isArray(insight) ? insight.join(". ") : String(insight);
+
+                            return (
+                                <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-3">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Brain size={14} className="text-purple-400" />
+                                        <span className="text-[10px] font-bold text-white/60 uppercase">{category.replace(/_/g, " ")}</span>
+                                    </div>
+                                    <p className="text-sm font-medium text-white line-clamp-3">{displayContent}</p>
                                 </div>
-                                <p className="text-sm font-medium text-white">{insight}</p>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex items-center gap-3">
                             <AlertCircle size={16} className="text-white/40" />

@@ -77,7 +77,10 @@ export function RatingHistoryGraph() {
         );
     }
 
-    const { history = [], current_rating = 1200, total_changes = 0, highest_rating, lowest_rating } = data || {};
+    const history = (data?.history || []).filter(h => h && typeof h === 'object' && typeof h.rating === 'number');
+    const current_rating = data?.current_rating || 1200;
+    const total_changes = data?.total_changes || 0;
+    const { highest_rating, lowest_rating } = data || {};
 
     // Calculate graph dimensions
     const graphHeight = 120;
