@@ -28,7 +28,7 @@ export function RatingHistoryGraph() {
         setError(null);
         try {
             const userId = localStorage.getItem('user_id');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/rating-history?limit=50`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/rating-history?limit=50`, {
                 headers: userId ? { 'X-User-Id': userId } : {}
             });
             if (!res.ok) throw new Error("Failed to load rating history");

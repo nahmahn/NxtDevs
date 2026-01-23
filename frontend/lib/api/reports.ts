@@ -58,7 +58,7 @@ export interface ReportListResponse {
     total: number;
 }
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/v1` || 'http://localhost:8000/api/v1';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1` || 'http://localhost:8000/api/v1';
 
 export const reportsApi = {
     // Generate a new report

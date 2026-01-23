@@ -38,7 +38,7 @@ export default function LeetCodePage() {
     const fetchStats = () => {
         const token = localStorage.getItem('auth_token');
         if (token) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/stats`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/stats`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(res => res.json())
@@ -61,7 +61,7 @@ export default function LeetCodePage() {
         setSyncing(true);
         const token = localStorage.getItem('auth_token');
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/sync`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/sync`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });

@@ -30,7 +30,7 @@ export interface TutorState {
     session_id: string;
 }
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/v1` || 'http://localhost:8000/api/v1';
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1` || 'http://localhost:8000/api/v1';
 
 export const tutorApi = {
     getTutorState: async (): Promise<TutorState | null> => {

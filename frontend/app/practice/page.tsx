@@ -76,7 +76,7 @@ export default function PracticeSession() {
     useEffect(() => {
         const fetchFilters = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/questions/filters`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/questions/filters`);
                 if (res.ok) {
                     const data = await res.json();
                     setFilterOptions({
@@ -117,7 +117,7 @@ export default function PracticeSession() {
         try {
             const userId = localStorage.getItem('user_id');
             const queryParams = buildQueryParams();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/questions/next?${queryParams}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/questions/next?${queryParams}`, {
                 headers: userId ? { 'X-User-Id': userId } : {}
             });
 
@@ -149,7 +149,7 @@ export default function PracticeSession() {
 
         try {
             const userId = localStorage.getItem('user_id');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/questions/${question.id}/submit`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/questions/${question.id}/submit`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

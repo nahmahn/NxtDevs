@@ -219,7 +219,7 @@ export default function DuelPage() {
         }
         console.log("[fetchDuelState] Fetching for duel:", currentDuelId);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/duel/${currentDuelId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/${currentDuelId}`, {
                 headers: { "X-User-Id": userId }
             });
             if (res.ok) {
@@ -273,7 +273,7 @@ export default function DuelPage() {
         setIsJoining(true);
         setError(null);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/duel/join-queue`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/join-queue`, {
                 method: "POST",
                 headers: { "X-User-Id": currentUserId }
             });
@@ -309,7 +309,7 @@ export default function DuelPage() {
     const pollQueue = async () => {
         const pollInterval = setInterval(async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/duel/join-queue`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/join-queue`, {
                     method: "POST",
                     headers: { "X-User-Id": currentUserId || '' }
                 });
@@ -347,7 +347,7 @@ export default function DuelPage() {
     // Leave queue
     const leaveQueue = async () => {
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/duel/leave-queue`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/leave-queue`, {
                 method: "POST",
                 headers: { "X-User-Id": currentUserId || '' }
             });
@@ -366,7 +366,7 @@ export default function DuelPage() {
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/v1/duel/${duelId}/answer?option_id=${optionId}&time_ms=${timeTaken}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/${duelId}/answer?option_id=${optionId}&time_ms=${timeTaken}`,
                 {
                     method: "POST",
                     headers: { "X-User-Id": currentUserId || '' }
@@ -424,7 +424,7 @@ export default function DuelPage() {
             if (!currentDuelId || !currentUserIdRef.current) return;
 
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/duel/${currentDuelId}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/duel/${currentDuelId}`, {
                     headers: { "X-User-Id": currentUserIdRef.current || '' }
                 });
                 if (res.ok) {

@@ -40,7 +40,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         const userId = localStorage.getItem('user_id');
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/profile`, {
             headers: userId ? { 'X-User-Id': userId } : {}
         })
             .then((res) => {

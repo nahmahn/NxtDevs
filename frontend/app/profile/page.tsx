@@ -17,7 +17,7 @@ export default function ProfilePage() {
         const token = localStorage.getItem('auth_token');
 
         // Fetch user profile
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/profile`, {
             headers: userId ? { 'X-User-Id': userId } : {}
         })
             .then((res) => res.json())
@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
         // Fetch LeetCode stats
         if (token) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/stats`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/stats`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(res => res.json())

@@ -27,7 +27,7 @@ export default function LeetCodeWidget() {
         setLoading(true);
         try {
             const token = localStorage.getItem("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/stats`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/stats`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -51,7 +51,7 @@ export default function LeetCodeWidget() {
         setError(null);
         try {
             const token = localStorage.getItem("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/link`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/link`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export default function LeetCodeWidget() {
         setLinking(true);
         try {
             const token = localStorage.getItem("auth_token");
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/leetcode/sync`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/leetcode/sync`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });

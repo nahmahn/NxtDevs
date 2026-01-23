@@ -43,7 +43,7 @@ export default function RatingMode() {
 
         try {
             const userId = localStorage.getItem('user_id');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/questions/next?mode=rating`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/questions/next?mode=rating`, {
                 headers: userId ? { 'X-User-Id': userId } : {}
             });
 
@@ -75,7 +75,7 @@ export default function RatingMode() {
 
         try {
             const userId = localStorage.getItem('user_id');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/questions/${question.id}/submit`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/questions/${question.id}/submit`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
