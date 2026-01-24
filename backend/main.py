@@ -10,8 +10,40 @@ async def lifespan(app: FastAPI):
     # Startup
     create_db_and_tables()
     await cache.connect()
+    
+    # Start Background Scheduler for Stale Duels
+    from apscheduler.schedulers.background import BackgroundScheduler
+    from backend.core.db import engine
+    from sqlalchemy import text
+    
+    def cleanup_stale_duels_job():
+        try:
+            with engine.connect() as connection:
+                connection.begin()
+                # Clean duels older than 1 hour or stuck in generic bad state
+                result = connection.execute(text("""
+                    UPDATE duelsession 
+                    SET status = 'COMPLETED', ended_at = NOW() 
+                    WHERE status IN ('IN_PROGRESS', 'COUNTDOWN') 
+                    AND started_at < NOW() - INTERVAL '1 hour';
+                """))
+                if result.rowcount > 0:
+                    print(f"[Scheduler] Cleaned up {result.rowcount} stale duels.")
+                
+                # Also clean matchmaking queue > 1 hour old (rare but possible)
+                connection.execute(text("DELETE FROM matchmakingqueue WHERE joined_at < NOW() - INTERVAL '1 hour';"))
+                connection.commit()
+        except Exception as e:
+            print(f"[Scheduler] Cleanup failed: {e}")
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(cleanup_stale_duels_job, 'interval', minutes=15)
+    scheduler.start()
+    
     yield
+    
     # Shutdown
+    scheduler.shutdown()
     await cache.disconnect()
 
 app = FastAPI(title="Brainwave API", version="1.0.0", lifespan=lifespan)
