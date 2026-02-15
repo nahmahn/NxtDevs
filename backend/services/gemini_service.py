@@ -6,7 +6,7 @@ import os
 from typing import Optional
 
 # Configure Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCfzw6p9cXA4-Bt5q8H4yFW54Eij4qy5a8")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Use Gemini 1.5 Flash for speed
