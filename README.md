@@ -22,7 +22,7 @@
 
 ## System Overview
 
-Brainwave is an advanced algorithmic training platform designed to go beyond syntax verification. It utilizes a multi-dimensional profiling engine to track user cognition across 20+ "Thinking Axes," identifying specific cognitive pitfalls such as "Greedy Bias" or "Premature Optimization."
+NxtDevs is an advanced algorithmic training platform designed to go beyond syntax verification. It utilizes a multi-dimensional profiling engine to track user cognition across 20+ "Thinking Axes," identifying specific cognitive pitfalls such as "Greedy Bias" or "Premature Optimization."
 
 The platform integrates real-time competitive duels, generative AI coaching, and deep analytics to foster genuine problem-solving growth.
 
