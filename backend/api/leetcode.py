@@ -63,3 +63,34 @@ async def get_leetcode_stats(
         "history": stats.history,
         "last_synced": stats.last_synced_at.isoformat()
     }
+
+@router.post("/sync")
+async def sync_leetcode_stats(
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Forces a sync of the user's LeetCode stats.
+    """
+    if not user.leetcode_username:
+        raise HTTPException(status_code=400, detail="LeetCode not linked")
+
+    stats = await leetcode_service.sync_user_stats(session, user)
+
+    return {
+        "linked": True,
+        "username": user.leetcode_username,
+        "total_solved": stats.total_solved,
+        "easy": stats.easy_solved,
+        "medium": stats.medium_solved,
+        "hard": stats.hard_solved,
+        "ranking": stats.ranking,
+        "streak": stats.streak,
+        "streak_active": stats.streak_active,
+        "thinking_patterns": stats.thinking_patterns,
+        "tag_stats": stats.tag_stats,
+        "recent_submissions": stats.recent_submissions,
+        "submission_calendar": stats.submission_calendar,
+        "history": stats.history,
+        "last_synced": stats.last_synced_at.isoformat()
+    }
